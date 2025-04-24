@@ -2,6 +2,8 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -47,7 +49,7 @@ export class AuthService {
     }
   }
 
-  async login(loginDto: LoginDto): Promise<{ token: string; message: string }> {
+  async login(loginDto: LoginDto): Promise<{ token: string; message: string; statusCode: number }> {
     const { identifier, password } = loginDto;
   
     try {
@@ -56,7 +58,7 @@ export class AuthService {
       }).exec();
   
       if (!user) {
-        throw new NotFoundException('User not found');
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
   
       const isPasswordValid = await this.hashUtils.comparePassword(
@@ -65,7 +67,7 @@ export class AuthService {
       );
   
       if (!isPasswordValid) {
-        throw new UnauthorizedException('Invalid password');
+        throw new HttpException('Invalid password', HttpStatus.UNAUTHORIZED);
       }
   
       const payload: any = {
@@ -75,10 +77,10 @@ export class AuthService {
         username: user.username,
       };
       const token = this.jwtService.sign(payload, {
-        expiresIn:'1h',
+        expiresIn: '1h',
       });
   
-      return { message: 'login successful', token };
+      return { message: 'login successful', token, statusCode: HttpStatus.OK };
     } catch (error) {
       throw error;
     }
