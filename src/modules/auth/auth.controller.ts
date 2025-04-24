@@ -1,0 +1,30 @@
+import { Body, Controller, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { AuthService } from './auth.service';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { User, UserSchema } from '../../schemas/user.schema';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+
+@ApiTags('auth')
+@Controller('auth')
+export class AuthController {
+    constructor(
+        private readonly authService: AuthService,
+    ) {}
+
+    @Post('register')
+    async register(@Body() registerDto: RegisterDto): Promise<{ message: string }> {
+        try {
+            return this.authService.registerUser(registerDto);
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    @Post('login')
+    async login(@Body() loginDto: LoginDto): Promise<{ message: string; token: string }> {
+        return this.authService.login(loginDto);
+    }
+}
