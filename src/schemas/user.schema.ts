@@ -35,7 +35,7 @@ export class User {
   @Prop({required: false})
   profileImage: string;
 
-  @Prop({ required: true, type: Date })
+  @Prop({ required: false, type: Date })
   dateOfBirth: Date;
 
 }

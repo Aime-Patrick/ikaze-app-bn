@@ -26,13 +26,9 @@ export class RegisterDto {
     @IsString()
     @IsNotEmpty({ message: 'field is required' })
     password: string;
-    
+
     @ApiProperty({ example: 'Date of birth for user' })
     @IsString()
     @IsNotEmpty({ message: 'field is required' })
     dateOfBirth: string;
-
-    @ApiProperty({ example: 'Profile image for user' })
-    @IsString()
-    profileImage: string;
 }
