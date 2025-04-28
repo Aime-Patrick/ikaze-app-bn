@@ -3,17 +3,22 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Place } from 'src/schemas/places.schema';
 import { CreatePlacesDto } from './dto/create-places.dto';
+import { PlacesGateway } from 'src/webSocket/webSocket.place.gateway';
 
 @Injectable()
 export class PlacesService {
   constructor(
     @InjectModel(Place.name) private readonly placeModel: Model<Place>,
+    private readonly placesGateway: PlacesGateway,
   ) {}
 
-  async createPlace(createPlacesDto: CreatePlacesDto): Promise<{place: Place, statusCode: number}> {
+  async createPlace(createPlacesDto: CreatePlacesDto): Promise<{ place: Place; statusCode: number }> {
     const newPlace = new this.placeModel(createPlacesDto);
     const place = await newPlace.save();
-    return {place, statusCode: 201};
+
+    this.placesGateway.notifyNewPlace(place);
+
+    return { place, statusCode: 201 };
   }
 
   async getAllPlaces(): Promise<{statusCode: number, places:Place[]}> {

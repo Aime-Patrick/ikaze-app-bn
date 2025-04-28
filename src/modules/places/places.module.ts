@@ -4,14 +4,14 @@ import { Place, PlaceSchema } from 'src/schemas/places.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PlacesController } from './places.controller';
 import { UtilsModule } from 'src/utils/utils.module';
+import { PlacesGateway } from 'src/webSocket/webSocket.place.gateway';
+
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Place.name, schema: PlaceSchema }]),
-    UtilsModule
+    UtilsModule,
   ],
-  controllers: [
-    PlacesController
-  ],
-  providers: [PlacesService]
+  controllers: [PlacesController],
+  providers: [PlacesService, PlacesGateway],
 })
 export class PlacesModule {}
