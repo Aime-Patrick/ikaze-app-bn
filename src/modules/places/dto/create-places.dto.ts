@@ -3,12 +3,13 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreatePlacesDto {
   @ApiProperty({
-    description: 'URL or path to the image of the place',
-    example: 'assets/images/gettyimages.jpg',
+    description: 'Array of image files for the place',
+    type: 'array',
+    items: { type: 'string', format: 'binary' },
+    required: false,
   })
-  @IsNotEmpty()
-  @IsString()
-  images: string[];
+  @IsOptional()
+  images: any[];
 
   @ApiProperty({
     description: 'Location of the place',

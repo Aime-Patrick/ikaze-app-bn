@@ -16,6 +16,6 @@ export class UsersService {
     }
     
     async findAllUsers(): Promise<User[]> {
-        return (await this.userModel.find().select('-password').exec()).filter(user => user.role === UserRole.SYSTEM_ADMIN);
+        return (await this.userModel.find().select('-password').exec()).filter(user => user.role !== UserRole.SYSTEM_ADMIN);
     }
 }

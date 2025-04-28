@@ -11,7 +11,12 @@ import {
   UseInterceptors,
   UploadedFiles,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { PlacesService } from './places.service';
 import { CreatePlacesDto } from './dto/create-places.dto';
 import { JwtAuthGuard } from 'src/guard/jwt.guard';
@@ -20,6 +25,7 @@ import { Roles } from 'src/decorator/roles.decorator';
 import { UserRole } from 'src/schemas/user.schema';
 import { HashService } from 'src/utils/utils.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { UpdatePlaceDto } from './dto/update-place.dto';
 
 @ApiTags('places')
 @Controller('places')
@@ -33,11 +39,16 @@ export class PlacesController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SYSTEM_ADMIN)
-  @ApiOperation({ summary: 'Create a new place' })
-    @ApiConsumes('multipart/form-data')
-    @UseInterceptors(FilesInterceptor('images'))
-    
-  async createPlace(@Body() createPlacesDto: CreatePlacesDto, @UploadedFiles() files: Express.Multer.File[],) {
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FilesInterceptor('images'))
+  @ApiOperation({
+    summary: 'Create a new place',
+    description: 'Create a new place with images.',
+  })
+  async createPlace(
+    @Body() createPlacesDto: CreatePlacesDto,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
     if (!files || files.length === 0) {
       throw new BadRequestException('No files uploaded');
     }
@@ -69,7 +80,7 @@ export class PlacesController {
   @ApiOperation({ summary: 'Update a place by ID' })
   async updatePlace(
     @Param('id') id: string,
-    @Body() updateData: Partial<CreatePlacesDto>,
+    @Body() updateData: UpdatePlaceDto,
   ) {
     return this.placesService.updatePlace(id, updateData);
   }
