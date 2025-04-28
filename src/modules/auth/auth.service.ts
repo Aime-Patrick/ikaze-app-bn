@@ -36,7 +36,7 @@ export class AuthService {
     const hashedPassword = await this.hashUtils.hashPassword(password);
 
     const newUser = new this.userModel({
-      ...RegisterDto,
+      ...register,
       password: hashedPassword,
       role: UserRole.USER,
     });

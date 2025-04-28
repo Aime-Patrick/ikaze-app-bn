@@ -27,8 +27,4 @@ export class RegisterDto {
     @IsNotEmpty({ message: 'field is required' })
     password: string;
 
-    @ApiProperty({ example: 'Date of birth for user' })
-    @IsString()
-    @IsNotEmpty({ message: 'field is required' })
-    dateOfBirth: string;
 }
