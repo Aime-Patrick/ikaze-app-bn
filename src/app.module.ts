@@ -7,6 +7,7 @@ import { SeedersModule } from './seeders/seeders.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import { SystemAdminModule } from './modules/system-admin/system-admin.module';
+import { PlacesModule } from './modules/places/places.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ load: [databaseConfig] }),
@@ -22,6 +23,7 @@ import { SystemAdminModule } from './modules/system-admin/system-admin.module';
     SystemAdminModule,
     PaymentModule,
     SeedersModule,
+    PlacesModule
   ],
   controllers: [],
   providers: [],

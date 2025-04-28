@@ -21,7 +21,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async registerUser(register: RegisterDto): Promise<{ message: string }> {
+  async registerUser(register: RegisterDto): Promise<{ message: string, statusCode: number }> {
     try {
       const { email, password, username, phoneNumber } = register;
 
@@ -43,7 +43,7 @@ export class AuthService {
 
     await newUser.save();
 
-    return { message: 'Account created successfully' };
+    return { message: 'Account created successfully' , statusCode: HttpStatus.CREATED };  
     } catch (error) {
       throw error;
     }
