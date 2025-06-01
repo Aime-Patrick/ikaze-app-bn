@@ -8,6 +8,10 @@ import { AuthModule } from './modules/auth/auth.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import { SystemAdminModule } from './modules/system-admin/system-admin.module';
 import { PlacesModule } from './modules/places/places.module';
+import { OTPModule } from './modules/otp/otp.module';
+import { ReviewModule } from './modules/review/review.module';
+import { BookingModule } from './modules/booking/booking.module';
+import { NotificationModule } from './modules/notification/notification.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ load: [databaseConfig] }),
@@ -23,7 +27,12 @@ import { PlacesModule } from './modules/places/places.module';
     SystemAdminModule,
     PaymentModule,
     SeedersModule,
-    PlacesModule
+    PlacesModule,
+    OTPModule,
+    BookingModule,
+    ReviewModule,
+    NotificationModule,
+    SystemAdminModule
   ],
   controllers: [],
   providers: [],

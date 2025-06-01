@@ -1,39 +1,37 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose from "mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
+import { PaymentStatus } from '../modules/payment/enums/payment-status.enum';
+import { PaymentMethod } from '../modules/payment/enums/payment-method.enum';
 
-export enum paymentStatus{
-    PENDING= 'pending',
-    APPROVED="approved",
-    REJECTED="rejected"
-}
-
-export enum paymentPlan{
-    MONTHLY="monthly",
-    quarterly="quarterly",
-    YEARLY="yearly"
-}
 @Schema({ timestamps: true })
-export class Payment {
-    @Prop({type: mongoose.Schema.ObjectId,ref: "School"})
-    schoolId:mongoose.Types.ObjectId;
+export class Payment extends Document {
+    @Prop({ required: true })
+    amount: number;
 
-    @Prop({required: true})
-    amount:number
+    @Prop({ required: true })
+    currency: string;
 
-    @Prop({required: true, enum:paymentStatus, default: "pending"})
-    status:paymentStatus
+    @Prop({ type: String, enum: PaymentStatus, default: PaymentStatus.PENDING })
+    status: PaymentStatus;
 
-    @Prop({required: true, enum:paymentPlan})
-    plan:paymentPlan
+    @Prop({ type: String, enum: PaymentMethod, required: true })
+    method: PaymentMethod;
 
-    @Prop({required: true})
-    proof:string[]
+    @Prop()
+    paymentIntentId?: string;
 
-    @Prop({ required: true, type: Date })
-    date: Date;
+    @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+    userId: Types.ObjectId;
 
-    @Prop({required: true, type: Number , default: 0})
-    totalPayment: number
+    @Prop()
+    description?: string;
+
+    @Prop()
+    receiptUrl?: string;
+
+    @Prop({ type: Object }) // 👈 Fixed
+    metadata?: Record<string, any>;
 }
+
 
 export const PaymentSchema = SchemaFactory.createForClass(Payment);

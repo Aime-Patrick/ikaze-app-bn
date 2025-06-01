@@ -4,12 +4,12 @@ import { Module } from '@nestjs/common';
 import { join } from 'path';
 import { MailService } from './mail.service';
 import { ConfigService, ConfigModule } from '@nestjs/config';
-
+import { WebSocketModule } from '../webSocket/webSocket.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MailerModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [ConfigModule, WebSocketModule],
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => ({
         transport: {
@@ -32,6 +32,7 @@ import { ConfigService, ConfigModule } from '@nestjs/config';
         },
       }),
     }),
+    WebSocketModule
   ],
   providers: [MailService],
   exports: [MailService],

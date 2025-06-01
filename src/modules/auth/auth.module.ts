@@ -9,7 +9,9 @@ import { ConfigService, ConfigModule } from '@nestjs/config';
 import { UtilsModule } from '../../utils/utils.module';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtAuthGuard } from 'src/guard/jwt.guard';
-
+import { OTP, OTPSchema } from 'src/schemas/otp.schema';
+import { MailModule } from '../mail/mail.module';
+import { Activity, ActivitySchema } from 'src/schemas/activity.schema';
 @Module({
   imports: [
     ConfigModule,
@@ -22,10 +24,15 @@ import { JwtAuthGuard } from 'src/guard/jwt.guard';
             signOptions: { expiresIn: '1h' },
         }),
     }),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema },
+      { name: OTP.name, schema: OTPSchema },
+      { name: Activity.name, schema: ActivitySchema }
+    ]),
     UtilsModule,
+    MailModule
   ],
   providers: [AuthService, JwtStrategy, JwtAuthGuard],
   controllers: [AuthController],
+  exports: [AuthService],
 })
 export class AuthModule {}

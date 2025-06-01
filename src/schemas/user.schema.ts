@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
 
 
 export enum UserRole {
@@ -12,9 +13,13 @@ export enum UserRole {
     OTHER = "Other"
   }
   
+export enum UserStatus {
+    ACTIVE = 'active',
+    INACTIVE = 'inactive'
+}
 
 @Schema({ timestamps: true }) 
-export class User {
+export class User  {
   @Prop({ required: true })
   username: string;
 
@@ -38,6 +43,51 @@ export class User {
   @Prop({ required: false, type: Date })
   dateOfBirth: Date;
 
+  @Prop({ 
+    type: String, 
+    enum: UserStatus, 
+    default: UserStatus.ACTIVE 
+  })
+  status: string;
+
+  @Prop({ 
+    type: Boolean, 
+    default: false 
+  })
+  isEmailVerified: boolean;
+
+  @Prop({ 
+    type: Date 
+  })
+  emailVerifiedAt: Date;
+
+  @Prop({ 
+    type: Date,
+    default: null 
+  })
+  lastLogin: Date;
+
+  @Prop({ 
+    type: [{
+      timestamp: Date,
+      ip: String,
+      device: String,
+      platform: String
+    }],
+    default: []
+  })
+  loginHistory: Array<{
+    timestamp: Date;
+    ip: string;
+    device: string;
+    platform: string;
+  }>;
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Place' }], default: [] })
+  favorites: Types.ObjectId[];
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Place' }], default: [] })
+  visitedPlaces: Types.ObjectId[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

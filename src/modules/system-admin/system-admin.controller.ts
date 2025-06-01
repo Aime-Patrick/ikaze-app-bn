@@ -1,16 +1,32 @@
-import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/decorator/roles.decorator';
-import { UserRole } from 'src/schemas/user.schema';
-import { HashService } from 'src/utils/utils.service';
 import { JwtAuthGuard } from 'src/guard/jwt.guard';
 import { RolesGuard } from 'src/guard/roles.guard';
+import { SystemAdminService } from './system-admin.service';
 
 @ApiTags('system-admin')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('system-admin')
 export class SystemAdminController {
-  constructor(
-    private hashService: HashService,
-  ) {}
+  constructor(private readonly systemAdminService: SystemAdminService) {}
+
+  @Get('statistics')
+  @ApiOperation({ summary: 'Get system statistics', description: 'Returns dashboard statistics for admin.' })
+  async getStatistics() {
+    return this.systemAdminService.getStatistics();
+  }
+
+  @Get('recent-activities')
+  @ApiOperation({ summary: 'Get recent activities', description: 'Returns recent system activities.' })
+  async getRecentActivities() {
+    return this.systemAdminService.getRecentActivities();
+  }
+
+  @Get('reports')
+  @ApiOperation({ summary: 'Get dashboard reports', description: 'Returns analytics data for dashboard charts.' })
+  async getReports() {
+    return this.systemAdminService.getReports();
+  }
 }
+

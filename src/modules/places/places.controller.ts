@@ -10,6 +10,7 @@ import {
   BadRequestException,
   UseInterceptors,
   UploadedFiles,
+  Req,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -48,6 +49,7 @@ export class PlacesController {
   async createPlace(
     @Body() createPlacesDto: CreatePlacesDto,
     @UploadedFiles() files: Express.Multer.File[],
+    @Req() req: any, // Use 'any' for simplicity, or define a specific type if needed
   ) {
     if (!files || files.length === 0) {
       throw new BadRequestException('No files uploaded');
@@ -58,7 +60,7 @@ export class PlacesController {
     );
 
     const urls = uploadedFiles.map((f) => f.url);
-    return this.placesService.createPlace({ ...createPlacesDto, images: urls });
+    return this.placesService.createPlace({ ...createPlacesDto, images: urls }, req.user);
   }
 
   @Get()
@@ -77,11 +79,21 @@ export class PlacesController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SYSTEM_ADMIN)
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FilesInterceptor('images'))
   @ApiOperation({ summary: 'Update a place by ID' })
   async updatePlace(
     @Param('id') id: string,
     @Body() updateData: UpdatePlaceDto,
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
+     if (files && files.length > 0) {
+      const uploadedFiles = await Promise.all(
+        files.map((file) => this.hashService.uploadFileToCloudinary(file)),
+      );
+      const urls = uploadedFiles.map((f) => f.url);
+      updateData.images = urls;
+    }
     return this.placesService.updatePlace(id, updateData);
   }
 
